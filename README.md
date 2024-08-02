@@ -1,13 +1,13 @@
-Linux Server only.   
+Linux Server only. Different version of Linux may rely on different .so files to link, thus I don't put certain version of executable here, please compile these 3 code manually
 
 Step 1: Replace the ip address "192.168.80.132" in the tcsl.cpp and host.cpp
 
 
-Step 2: Copy all the codes to your Linux Server, and then run:
+Step 2: Copy all the codes, tcsl.cpp to your Linux Server, virus.cpp to your victim server, host.cpp to your local machine as control side, and then compile:
 
 g++ tcsl.cpp -o tcsl 
 g++ host.cpp -o host 
-g++ server.cpp -o server 
+g++ virus.cpp -o server 
 
 Step 3: Open 3 terminals and run the command seperately:
 ./tcsl
