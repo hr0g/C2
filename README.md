@@ -67,6 +67,7 @@ server.conf
 
 ┌──(root♪hr0g) - [~1]
 
+
 └─# exit
 
 Exited.
