@@ -12,14 +12,20 @@
 std::vector<int> clientSockets; // Vector to store client sockets
 std::vector<std::string> clientIps; // Vector to store client sockets
 std::mutex clientSocketsMutex;  // Mutex to protect access to clientSockets
-int hostIndex = -1;
+int hostIndex = -1, targetClient = -1;
+std::string prestr;
+
+void SelectClient(int targetClient)
+{
+	hostIndex = targetClient;
+}
 
 int ConnectionList()
 {
-    std::string str;
+    std::string str = prestr;
     clientSocketsMutex.lock();
-    for (int i = 0; i < clientIps.size() && i < clientSockets.size() && i != hostIndex; ++i) {
-        if (hostIndex != -1)
+    for (int i = 0; i < clientIps.size() && i < clientSockets.size(); ++i) {
+        if (hostIndex != -1 && i != hostIndex)
         {
             str += "Client " + std::to_string(i) + ": " + " Ip: " + clientIps[i]+"\n";
         }
@@ -27,6 +33,7 @@ int ConnectionList()
     }
     str = "\n" + str;
     send(clientSockets[hostIndex], str.c_str(), str.length(), 0);
+    prestr = "";
     clientSocketsMutex.unlock();
     return clientSockets.size() - 1;
 }
@@ -54,21 +61,62 @@ void ClientHandler(int clientSocket, int clientIndex) {
 				}
                 continue;
 			}
+            if (strcmp(buffer, "hr0ghh") == 0)
+            {
+                ConnectionList();
+                continue;
+            }
+			if (strncmp(buffer, "hr0ghs", 6) == 0)
+			{
+                const char* digits = buffer + 6;
+                while (*digits && std::isspace(*digits)) {
+                    ++digits;
+                }
+                if (*digits) {  // Make sure it's not just an empty string
+                    // Process the digits
+                    int clinum = atoi(digits);  // Convert to an integer
+                    targetClient = clinum;
+                    send(clientSockets[clientIndex], std::string("Client " + std::to_string(clinum) + " selected.").c_str(), std::string("Client " + std::to_string(clinum) + " selected.").length(), 0);
+                }
+				continue;
+			}
+
+            if (strcmp(buffer, "hr0gexit") == 0)
+            {
+                targetClient = -1;
+                prestr = "Exited.\n";
+                ConnectionList();
+                continue;
+            }
+
             std::cout << "Received from Client " << clientIndex << ":\n" << buffer << std::endl;
 
             clientSocketsMutex.lock();
             // Send the message to all other clients
-            if (clientIndex == hostIndex)
+            if (clientIndex != -1 && hostIndex != -1)
             {
-                for (int i = 0; i < clientSockets.size(); ++i) {
-                    if (i != clientIndex && clientSockets[i] != -1) { // Check socket is not the sender and is valid
-                        send(clientSockets[i], buffer, bytesReceived, 0);
-                    }
+                if (clientIndex == hostIndex)
+                {
+                    if (targetClient == -1)
+                    {
+                        send(clientSockets[hostIndex], std::string("Please use 'hs' followed with the client numbers you pick.\n\nFor example: 'hs 1'\n\nUse 'hh' to check the connected clients.").c_str(), std::string("Please use 'hs' followed with the client numbers you pick.\n\nFor example: 'hs 1'\n\nUse 'hh' to check the connected clients.").length(), 0);
+                        /*
+                        for (int i = 0; i < clientSockets.size(); ++i) {
+                            if (i != clientIndex && clientSockets[i] != -1) { // Check socket is not the sender and is valid
+                                send(clientSockets[i], buffer, bytesReceived, 0);
+                            }
+                        }
+                        */
+					}
+                    else
+					{
+						send(clientSockets[targetClient], buffer, bytesReceived, 0);
+					}
                 }
-            }
-            else if (clientIndex != -1 && hostIndex != -1)
-            {
-                send(clientSockets[hostIndex], buffer, bytesReceived, 0);
+                else
+                {
+                    send(clientSockets[hostIndex], buffer, bytesReceived, 0);
+                }
             }
             clientSocketsMutex.unlock();
         }
