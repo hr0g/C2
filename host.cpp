@@ -1,142 +1,129 @@
 #include <iostream>
-#include <cstring>
 #include <string>
-#include <vector>
-#include <sys/socket.h>
-#include <netinet/in.h>
+#include <cstring>
 #include <arpa/inet.h>
-#include <unistd.h> // For close()
+#include <sys/socket.h>
+#include <unistd.h>
 #include <thread>
 #include <mutex>
+#include <fcntl.h>
+#include <sys/select.h>
+#include <netinet/tcp.h>
 
-std::vector<int> clientSockets; // Vector to store client sockets
-std::vector<std::string> clientIps; // Vector to store client sockets
-std::mutex clientSocketsMutex;  // Mutex to protect access to clientSockets
-int hostIndex = -1;
+std::mutex coutMutex;
 
-int ConnectionList()
-{
-    std::string str;
-    clientSocketsMutex.lock();
-    for (int i = 0; i < clientIps.size() && i < clientSockets.size() && i != hostIndex; ++i) {
-        if (hostIndex != -1)
-        {
-            str += "Client " + std::to_string(i) + ": " + " Ip: " + clientIps[i]+"\n";
-        }
-        std::cout << "Client " << i << ": " << clientIps[i] << " Ip: " << clientSockets[i] << std::endl;
-    }
-    str = "\n" + str;
-    send(clientSockets[hostIndex], str.c_str(), str.length(), 0);
-    clientSocketsMutex.unlock();
-    return clientSockets.size() - 1;
+void setSocketNonBlocking(int sock) {
+    int flags = fcntl(sock, F_GETFL, 0);
+    if (flags < 0) return;
+    fcntl(sock, F_SETFL, flags | O_NONBLOCK);
 }
 
-void ClientHandler(int clientSocket, int clientIndex) {
+void sendMessage(int sock) {
+    std::string message;
+    while (true) {
+        std::getline(std::cin, message);
+        if (message == "bye") break;  // Add a way to break the loop
+
+        message = std::string("hr0g") + message;
+        if (send(sock, message.c_str(), message.length(), 0) < 0) {
+            std::cerr << "Send failed: " << strerror(errno) << std::endl;
+        }
+    }
+}
+
+void displayReceivedMessage(const std::string& message) {
+    std::lock_guard<std::mutex> lock(coutMutex);
+    std::cout << message << std::endl;
+    std::cout << "┌──(root♪hr0g) - [~]" << std::endl << "└─# " << std::flush;
+}
+
+void receiveMessage(int sock) {
+    fd_set readfds;
+    struct timeval tv;
+    int retval;
     char buffer[1024];
-    int bytesReceived;
 
     while (true) {
-        bytesReceived = recv(clientSocket, buffer, 1024, 0);
-        if (bytesReceived > 0) {
-            buffer[bytesReceived] = '\0'; // Ensure null-terminated string
-			if (strcmp(buffer, "hr0g") == 0)
-			{
-                hostIndex = clientIndex;
-                std::cout << "Host Detected: " << clientIndex << "\n" << buffer << std::endl;
-                if (clientIps.size() == 1)
-                {
-                    std::string nocinfo("No client connected.");
-                    send(clientSockets[hostIndex], nocinfo.c_str(), nocinfo.length(), 0);
-				}
-				else
-				{
-					ConnectionList();
-				}
-                continue;
-			}
-            std::cout << "Received from Client " << clientIndex << ":\n" << buffer << std::endl;
+        FD_ZERO(&readfds);
+        FD_SET(sock, &readfds);
 
-            clientSocketsMutex.lock();
-            // Send the message to all other clients
-            if (clientIndex == hostIndex)
-            {
-                for (int i = 0; i < clientSockets.size(); ++i) {
-                    if (i != clientIndex && clientSockets[i] != -1) { // Check socket is not the sender and is valid
-                        send(clientSockets[i], buffer, bytesReceived, 0);
-                    }
+        // Set timeout
+        tv.tv_sec = 5;
+        tv.tv_usec = 0;
+
+        retval = select(sock + 1, &readfds, NULL, NULL, &tv);
+
+        if (retval == -1) {
+            perror("select()");
+            break;
+        }
+        else if (retval > 0) {
+            if (FD_ISSET(sock, &readfds)) {
+                memset(buffer, 0, sizeof(buffer));
+                int bytesReceived = recv(sock, buffer, sizeof(buffer) - 1, 0); // Ensure buffer is null-terminated
+                if (bytesReceived > 0) {
+                    buffer[bytesReceived] = '\0'; // Null-terminate the buffer
+                    std::string receivedData(buffer);
+                    displayReceivedMessage(receivedData);
+                }
+                else if (bytesReceived == 0) {
+                    // Connection closed by peer
+                    std::cout << "Connection closed by peer" << std::endl;
+                    break;
+                }
+                else {
+                    // Error occurred
+                    std::cerr << "recv() error: " << strerror(errno) << std::endl;
+                    break;
                 }
             }
-            else if (clientIndex != -1 && hostIndex != -1)
-            {
-                send(clientSockets[hostIndex], buffer, bytesReceived, 0);
-            }
-            clientSocketsMutex.unlock();
-        }
-        else {
-            // Handle errors or disconnection
-            clientSocketsMutex.lock();
-            std::cout << "Client disconnected.\n";
-            close(clientSocket);  // Close the socket of this client
-            clientSockets[clientIndex] = -1; // Mark this client socket as closed
-            clientSockets.erase(clientSockets.begin() + clientIndex); // Remove this client socket from vector
-			clientIps.erase(clientIps.begin() + clientIndex); // Remove this client socket from vector
-            clientSocketsMutex.unlock();
-            break;
         }
     }
 }
 
 int main() {
-    int serverSocket;
-    struct sockaddr_in serverAddr, clientAddr;
-    socklen_t addrSize = sizeof(struct sockaddr_in);
+    int sock;
+    struct sockaddr_in server;
 
-    serverSocket = socket(AF_INET, SOCK_STREAM, 0);
-    if (serverSocket == -1) {
-        std::cerr << "Failed to create socket\n";
+    // Create socket
+    sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock == -1) {
+        std::cerr << "Could not create socket\n";
         return 1;
     }
 
-    memset(&serverAddr, 0, sizeof(serverAddr));
-    serverAddr.sin_family = AF_INET;
-    serverAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    serverAddr.sin_port = htons(5000);
-
-    if (bind(serverSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) == -1) {
-        std::cerr << "Bind failed\n";
-        close(serverSocket);
+    // Set TCP_NODELAY to disable Nagle's algorithm and send data immediately
+    int flag = 1;
+    int result = setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, (char*)&flag, sizeof(int));
+    if (result < 0) {
+        std::cerr << "Error setting TCP_NODELAY\n";
         return 1;
     }
 
-    listen(serverSocket, SOMAXCONN);
-    std::vector<std::thread> threads;
+    server.sin_addr.s_addr = inet_addr("154.12.177.190");
+    server.sin_family = AF_INET;
+    server.sin_port = htons(5000);
 
-    while (true) {
-        int clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddr, &addrSize);
-        if (clientSocket == -1) {
-            std::cerr << "Accept failed\n";
-            break; // Exit or handle error appropriately
-        }
-
-        char clientIP[INET_ADDRSTRLEN];
-        inet_ntop(AF_INET, &(clientAddr.sin_addr), clientIP, INET_ADDRSTRLEN);
-        std::cout << "Client " << clientIP << " connected." << std::endl;
-		clientIps.push_back(clientIP);
-
-        clientSocketsMutex.lock();
-        clientSockets.push_back(clientSocket); // Add new client socket to vector
-        int clientIndex = clientSockets.size() - 1;
-        clientSocketsMutex.unlock();
-
-        threads.push_back(std::thread(ClientHandler, clientSocket, clientIndex));
+    if (connect(sock, (struct sockaddr*)&server, sizeof(server)) < 0) {
+        perror("connect failed. Error");
+        return 1;
     }
 
-    for (auto& th : threads) {
-        if (th.joinable()) {
-            th.join();
-        }
-    }
+    setSocketNonBlocking(sock);  // Set the socket to non-blocking
 
-    close(serverSocket);
+    std::cout << "Connected to the server.\n";
+    //std::cout << "┌──(root♪hr0g) - [~]" << std::endl << "└─# " << std::flush;
+
+    std::string hr0g("hr0g");
+    send(sock, hr0g.c_str(), hr0g.length(), 0);
+
+    // Start the sender and receiver threads
+    std::thread sender(sendMessage, sock);
+    std::thread receiver(receiveMessage, sock);
+
+    sender.join();
+    receiver.join();
+
+    close(sock);
     return 0;
 }
