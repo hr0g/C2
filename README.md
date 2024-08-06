@@ -35,6 +35,7 @@ No client connected.
 ┌──(root♪hr0g) - [~]
 
 └─# ls
+
 Please use 'hs' followed with the client numbers you pick.
 
 For example: 'hs 1'
@@ -50,6 +51,7 @@ Client 1:  Ip: 223.104.76.166
 ┌──(root♪hr0g) - [~]
 
 └─# hs 1
+
 Client 1 selected.
 
 ┌──(root♪hr0g) - [~1]
@@ -70,11 +72,13 @@ server.conf
 └─# exit
 
 Exited.
+
 Client 1:  Ip: 223.104.76.166
 
 ┌──(root♪hr0g) - [~]
 
 └─# hs 1
+
 Client 1 selected.
 
 ┌──(root♪hr0g) - [~1]
@@ -93,6 +97,7 @@ server.conf
 ┌──(root♪hr0g) - [~1]
 
 └─# hs 2
+
 Client 2 selected.
 
 ┌──(root♪hr0g) - [~2]
@@ -113,6 +118,7 @@ Client 2:  Ip: 223.104.76.166
 ┌──(root♪hr0g) - [~]
 
 └─# hs 1
+
 Client 1 selected.
 
 ┌──(root♪hr0g) - [~1]
