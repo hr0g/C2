@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstring>
+#include <string>
 #include <vector>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -9,29 +10,53 @@
 #include <mutex>
 
 std::vector<int> clientSockets; // Vector to store client sockets
+std::vector<std::string> clientIps; // Vector to store client sockets
 std::mutex clientSocketsMutex;  // Mutex to protect access to clientSockets
 int hostIndex = -1;
 
+int ConnectionList()
+{
+    std::string str;
+    clientSocketsMutex.lock();
+    for (int i = 0; i < clientIps.size() && i < clientSockets.size() && i != hostIndex; ++i) {
+        if (hostIndex != -1)
+        {
+            str += "Client " + std::to_string(i) + ": " + " Ip: " + clientIps[i]+"\n";
+        }
+        std::cout << "Client " << i << ": " << clientIps[i] << " Ip: " << clientSockets[i] << std::endl;
+    }
+    str = "\n" + str;
+    send(clientSockets[hostIndex], str.c_str(), str.length(), 0);
+    clientSocketsMutex.unlock();
+    return clientSockets.size() - 1;
+}
+
 void ClientHandler(int clientSocket, int clientIndex) {
     char buffer[1024];
-    bool hr0g = false;
     int bytesReceived;
 
     while (true) {
         bytesReceived = recv(clientSocket, buffer, 1024, 0);
         if (bytesReceived > 0) {
             buffer[bytesReceived] = '\0'; // Ensure null-terminated string
-            if (strncmp(buffer, "hr0g", 4) == 0)
-            {
-                std::cout << "Received from Host " << clientIndex << ":\n" << buffer << std::endl;
-                hr0g = true;
+			if (strcmp(buffer, "hr0g") == 0)
+			{
                 hostIndex = clientIndex;
-            }
-            else
-            {
-                std::cout << "Received from Client " << clientIndex << ":\n" << buffer;
-                hr0g = false;
-            }
+                std::cout << "Host Detected: " << clientIndex << "\n" << buffer << std::endl;
+                if (clientIps.size() == 1)
+                {
+                    std::string nocinfo("No client connected.");
+                    send(clientSockets[hostIndex], nocinfo.c_str(), nocinfo.length(), 0);
+				}
+				else
+				{
+					ConnectionList();
+				}
+                continue;
+			}
+            std::cout << "Received from Client " << clientIndex << ":\n" << buffer << std::endl;
+
+            clientSocketsMutex.lock();
             // Send the message to all other clients
             if (clientIndex == hostIndex)
             {
@@ -53,6 +78,8 @@ void ClientHandler(int clientSocket, int clientIndex) {
             std::cout << "Client disconnected.\n";
             close(clientSocket);  // Close the socket of this client
             clientSockets[clientIndex] = -1; // Mark this client socket as closed
+            clientSockets.erase(clientSockets.begin() + clientIndex); // Remove this client socket from vector
+			clientIps.erase(clientIps.begin() + clientIndex); // Remove this client socket from vector
             clientSocketsMutex.unlock();
             break;
         }
@@ -91,7 +118,10 @@ int main() {
             break; // Exit or handle error appropriately
         }
 
-        std::cout << "Client connected.\n";
+        char clientIP[INET_ADDRSTRLEN];
+        inet_ntop(AF_INET, &(clientAddr.sin_addr), clientIP, INET_ADDRSTRLEN);
+        std::cout << "Client " << clientIP << " connected." << std::endl;
+		clientIps.push_back(clientIP);
 
         clientSocketsMutex.lock();
         clientSockets.push_back(clientSocket); // Add new client socket to vector
