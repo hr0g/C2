@@ -94,6 +94,7 @@ server.conf
 
 └─# hs 2
 Client 2 selected.
+
 ┌──(root♪hr0g) - [~2]
 
 └─# hh
@@ -120,6 +121,7 @@ Client 1 selected.
 Exited.
 Client 1:  Ip: 223.104.76.166
 Client 2:  Ip: 223.104.76.166
+
 
 ┌──(root♪hr0g) - [~]
 
