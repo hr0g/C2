@@ -122,7 +122,6 @@ Exited.
 Client 1:  Ip: 223.104.76.166
 Client 2:  Ip: 223.104.76.166
 
-
 ┌──(root♪hr0g) - [~]
 
 └─# ls
@@ -131,6 +130,7 @@ Please use 'hs' followed with the client numbers you pick.
 For example: 'hs 1'
 
 Use 'hh' to check the connected clients.
+
 ┌──(root♪hr0g) - [~]
 
 └─# 
