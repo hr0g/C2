@@ -67,7 +67,6 @@ server.conf
 
 ┌──(root♪hr0g) - [~1]
 
-
 └─# exit
 
 Exited.
@@ -117,6 +116,7 @@ Client 2:  Ip: 223.104.76.166
 Client 1 selected.
 
 ┌──(root♪hr0g) - [~1]
+
 └─# exit
 
 Exited.
