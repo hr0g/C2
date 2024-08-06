@@ -31,6 +31,7 @@ Enjoy your commands in the host terminal and control your client as terminal.
 For example:
 Connected to the server.
 No client connected.
+
 ┌──(root♪hr0g) - [~]
 
 └─# ls
@@ -39,6 +40,7 @@ Please use 'hs' followed with the client numbers you pick.
 For example: 'hs 1'
 
 Use 'hh' to check the connected clients.
+
 ┌──(root♪hr0g) - [~]
 
 └─# hh
@@ -49,6 +51,7 @@ Client 1:  Ip: 223.104.76.166
 
 └─# hs 1
 Client 1 selected.
+
 ┌──(root♪hr0g) - [~1]
 
 └─# ls 1
@@ -73,6 +76,7 @@ Client 1:  Ip: 223.104.76.166
 
 └─# hs 1
 Client 1 selected.
+
 ┌──(root♪hr0g) - [~1]
 
 └─# ls 1
@@ -109,6 +113,7 @@ Client 2:  Ip: 223.104.76.166
 
 └─# hs 1
 Client 1 selected.
+
 ┌──(root♪hr0g) - [~1]
 └─# exit
 
