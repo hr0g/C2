@@ -100,7 +100,7 @@ int main() {
         return 1;
     }
 
-    server.sin_addr.s_addr = inet_addr("154.12.177.190");
+    server.sin_addr.s_addr = inet_addr("192.168.80.132");
     server.sin_family = AF_INET;
     server.sin_port = htons(5000);
 
