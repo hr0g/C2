@@ -1,4 +1,5 @@
-Linux Server only. Different version of Linux may rely on different .so files to link, thus I don't put certain version of executable here, please compile these 3 code manually
+Linux Server C2 Controller
+Different version of Linux may rely on different .so files to link, thus I don't put certain version of executable here, please compile these 3 code manually
 
 Step 1: Replace the ip address "192.168.80.132" in the tcsl.cpp and host.cpp
 
