@@ -59,12 +59,19 @@ Client 1 selected.
 └─# ls 1
 
 ca.crt
+
 ca.key
+
 dh.pem
+
 ha.crt
+
 ha.key
+
 hr0g.crt
+
 hr0g.key
+
 server.conf
 
 ┌──(root♪hr0g) - [~1]
@@ -86,12 +93,19 @@ Client 1 selected.
 └─# ls 1
 
 ca.crt
+
 ca.key
+
 dh.pem
+
 ha.crt
+
 ha.key
+
 hr0g.crt
+
 hr0g.key
+
 server.conf
 
 ┌──(root♪hr0g) - [~1]
@@ -105,6 +119,7 @@ Client 2 selected.
 └─# hh
 
 Client 1:  Ip: 223.104.76.166
+
 Client 2:  Ip: 223.104.76.166
 
 ┌──(root♪hr0g) - [~2]
@@ -112,7 +127,9 @@ Client 2:  Ip: 223.104.76.166
 └─# exit
 
 Exited.
+
 Client 1:  Ip: 223.104.76.166
+
 Client 2:  Ip: 223.104.76.166
 
 ┌──(root♪hr0g) - [~]
@@ -126,12 +143,15 @@ Client 1 selected.
 └─# exit
 
 Exited.
+
 Client 1:  Ip: 223.104.76.166
+
 Client 2:  Ip: 223.104.76.166
 
 ┌──(root♪hr0g) - [~]
 
 └─# ls
+
 Please use 'hs' followed with the client numbers you pick.
 
 For example: 'hs 1'
