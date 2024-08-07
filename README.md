@@ -1,35 +1,55 @@
 Linux Server C2 Controller
 
 Step 1:
+
 Replace the ip address "192.168.80.132" in the tcsl.cpp and host.cpp as your server ipv4 address
 
 Step 2:
+
 Copy tcsl.cpp to your Linux Server
+
 virus.cpp to your victim server
+
 host.cpp to your local machine as control side
+
 and then compile:
 
-g++ tcsl.cpp -o tcsl 
-g++ host.cpp -o host 
-g++ virus.cpp -o server 
+g++ tcsl.cpp -o tcsl
+
+g++ host.cpp -o host
+
+g++ virus.cpp -o server
 
 Step 3: 
-Open 3 terminals and run the command seperately:
+
+Open terminals and run the command seperately:
+
 ./tcsl
+
 Support any amounts of Clients' connections
-the Host and Client is auto-recognized:  
+
+the Host and Client is auto-recognized:
+
 ./virus
+
 ./host
 
 Step 4:
+
 Please use 'hs' followed with the client numbers you pick.
+
 For example: 'hs 1'
+
 Use 'hh' to check the connected clients.
 
 Step 5:
+
 Enjoy your commands in the host terminal and control your client as terminal.
+
 For example:
+
 Connected to the server.
+
 No client connected.
 
 ┌──(root♪hr0g) - [~]
