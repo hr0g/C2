@@ -1,10 +1,14 @@
 Linux Server C2 Controller
 
-Step 1:
+
+
+**Step 1:**
 
 Replace the ip address "192.168.80.132" in the tcsl.cpp and host.cpp as your server ipv4 address
 
-Step 2:
+
+
+**Step 2:**
 
 Copy tcsl.cpp to your Linux Server
 
@@ -20,7 +24,9 @@ g++ host.cpp -o host
 
 g++ virus.cpp -o server
 
-Step 3: 
+
+
+**Step 3: **
 
 Open terminals and run the command seperately:
 
@@ -34,7 +40,9 @@ the Host and Client is auto-recognized:
 
 ./host
 
-Step 4:
+
+
+**Step 4:**
 
 Please use 'hs' followed with the client numbers you pick.
 
@@ -42,7 +50,9 @@ For example: 'hs 1'
 
 Use 'hh' to check the connected clients.
 
-Step 5:
+
+
+**Step 5:**
 
 Enjoy your commands in the host terminal and control your client as terminal.
 
@@ -148,12 +158,12 @@ Client 2:  Ip: 223.104.76.166
 
 Please use 'hs' followed with the client numbers you pick.
 
-For example: 'hs 1'
+For example: 'hs 1'  
 
 Use 'hh' to check the connected clients.
 
 ┌──(root♪hr0g) - [~]
 
-└─# 
+└─#
 
-use 'chatmode' to communicate with victims(under development)
+Hint: use 'chatmode' to communicate with victims(under development)
