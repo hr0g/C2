@@ -15,11 +15,6 @@ std::mutex clientSocketsMutex;  // Mutex to protect access to clientSockets
 int hostIndex = -1, targetClient = -1;
 std::string prestr;
 
-void SelectClient(int targetClient)
-{
-	hostIndex = targetClient;
-}
-
 int ConnectionList()
 {
     std::string str = prestr;
@@ -99,7 +94,7 @@ void ClientHandler(int clientSocket, int clientIndex) {
                 {
                     if (targetClient == -1)
                     {
-                        send(clientSockets[hostIndex], std::string("Please use 'hs' followed with the client numbers you pick.\n\nFor example: 'hs 1'\n\nUse 'hh' to check the connected clients.").c_str(), std::string("Please use 'hs' followed with the client numbers you pick.\n\nFor example: 'hs 1'\n\nUse 'hh' to check the connected clients.").length(), 0);
+                        send(clientSockets[hostIndex], std::string("Please use 'hs' followed with the client numbers you pick.\n\nFor example: 'hs 1'\n\nUse 'hh' to check the connected clients.").c_str(), 121, 0);
                         /*
                         for (int i = 0; i < clientSockets.size(); ++i) {
                             if (i != clientIndex && clientSockets[i] != -1) { // Check socket is not the sender and is valid
