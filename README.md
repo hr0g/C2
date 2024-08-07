@@ -74,25 +74,12 @@ Client 1:  Ip: 223.104.76.166
 
 Client 1 selected.
 
+
 ┌──(root♪hr0g) - [~1]
 
-└─# ls 1
+└─# pwd
 
-ca.crt
-
-ca.key
-
-dh.pem
-
-ha.crt
-
-ha.key
-
-hr0g.crt
-
-hr0g.key
-
-server.conf
+/home/kali/Desktop
 
 ┌──(root♪hr0g) - [~1]
 
@@ -110,23 +97,10 @@ Client 1 selected.
 
 ┌──(root♪hr0g) - [~1]
 
-└─# ls 1
+└─# whoami
 
-ca.crt
+root
 
-ca.key
-
-dh.pem
-
-ha.crt
-
-ha.key
-
-hr0g.crt
-
-hr0g.key
-
-server.conf
 
 ┌──(root♪hr0g) - [~1]
 
