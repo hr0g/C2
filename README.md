@@ -54,9 +54,10 @@ Use 'hh' to check the connected clients.
 
 **Step 5:**
 
-Enjoy your commands in the host terminal and control your client as terminal.
+Enjoy your commands in the host terminal and control your client as terminal. 
+#
 
-For example:
+# Test
 
 Connected to the server.
 
