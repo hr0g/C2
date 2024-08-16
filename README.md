@@ -26,7 +26,7 @@ g++ virus.cpp -o server
 
 
 
-**Step 3: **
+**Step 3:**
 
 Open terminals and run the command seperately:
 
